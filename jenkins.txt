@@ -1,0 +1,276 @@
+
+------------------------------------
+1. what is jenkins?
+jenkins is a automation build tool
+
+2. what is CI/CD/CDE?
+CI: Continuous Intigration:
+Automated test execution
+Fix broken builds
+long run branches are not recommanded
+
+CD: Continuous delivery
+here will be a manual trigger when ever we deploy into the production
+ensure that the code is in deployment stage
+ex: https://continuousdelivery.com/implementing/patterns
+we need to version control all the configurations
+if any bugs accure we need to fix it immediately
+
+CDE: Continuous deployment:
+automated deployment to the production 
+here everything will be automated.
+--------------------------------------------------
+3. jenkins installation methods:
+	1. os specified(win , lin , mac )
+	2. executable(war) file
+	3. Docker Image
+Pre-requisits: Linux
+url: https://www.jenkins.io/doc/book/installing/linux/
+
+password: 02b1bae97aa84815b8c6b7891cedaef0
+
+# sudo wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+
+# sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+# sudo yum upgrade
+# sudo yum install java-11-openjdk
+# sudo amazon-linux-extras install java-openjdk11
+# sudo yum install jenkins
+# sudo systemctl daemon-reload
+# sudo systemctl enable jenkins
+# sudo systemctl start jenkins
+# sudo systemctl status jenkins
+# serverip:8080
+password: 02b1bae97aa84815b8c6b7891cedaef0
+----------------------------------------------------
+After login to jenkins:
+
+job - set of tasks are being executed based on some conditions may be time frequency, dependency.
+
+1. job name > description > job type
+
+2. scm(source code manager)- github(scm)
+
+3. build trigger - when this job should trigger (MINUTE HOUR DOM MONTH DOW)
+
+4. build steps - what we need to run 
+
+5. post build actions - after build if we want to send an alert
+
+---------------------------------------------------
+build: execution of automation task
+
+build trigger: 
+
+cron job: it is nothing but scheduling (poll scm)
+
+job : job is nothing but project / executable task like deploying , testing, compiling etc..
+
+parameterised job: if we pass parameterised job, it control the run time by using ENV.
+
+types of job: 
+1. freestyle project
+2. pipeline
+3. multi-configuration project
+4. folder
+5. multi branch pipeline
+6. organisation folder
+
+----------------------------------------------------
+Testing:
+It is a foundation of CI/CD
+types of testing:
+1. test pyramid >> unit test : low price and high speed
+				>> service test: compiling all the units and doing the service. it is costly compare to unit test
+				>> ui: user interface takes lot of time and more costly
+
+email notification when build fails:
+project > configure > post build actions > email notification
+
+artifacts: it archive the binary file
+project > configure > post build actions > archive artifacts
+
+-------------------------------------------------------------
+tasks: 29/11/22
+----------------
+1. poll scm for every 10sec
+
+2. poll scm on every 2nd sat 4pm
+ans: Build trigger > pole scm > * 16 13 * *
+
+3. poll scm for every 2 hours
+ans: Build trigger > pole scm > * */2 * * * 
+
+4. poll scm for 7th saturday 4pm?
+ans: Build trigger > pole scm > * 16 7 * 6
+------------------------------------------------------------
+Maven: 
+It is a build tool 
+
+compitator: 
+ant and gradle
+It has multiple goals or stages or phases
+
+validate: it will validate syntax, required pluggins , libraries
+
+compile : converting high level language into machine level language
+
+test: If we intigrate ant test, it will run the test case also.
+
+package: It will build an appliaction like .war , .jar, .ear package types
+
+verify: it will verify the application which you build.
+
+Install: It will spread the binaries into respected folders
+
+deploy: copy it into the repos or servers.
+------------------------------------------------
+java code repository filder structure: 
+pom.xml : project object model, it has all the required information about our project.
+required information in the sense project name, version , format , required libraries, pluggins, dependencies,
+
+tasks: 30/11/22
+1. please configure web hook as the build trigger
+ > In jenkins console, select new item
+ > choose Git as scm, enter github repo url
+ > choose Github hook trigger as build trigger
+ > apply and save changes
+ > go to github console > settings
+ > webhooks
+ > add webhook
+ > here enter jenkins url and Append the “/github-webhook/” at the end of the URL.
+   http://address:port/github-webhook/
+ > Select the “Content type” to “application/json”
+ > add webhook
+----------------------------------------------- 
+2. if i forget admin password how can i login.
+ > sudo vi /var/lib/jenkins/config.xml
+  edit the <useSecurity>true</useSecurity> as <useSecurity>false</useSecurity>
+ > sudo systemctl restart jenkins
+ > Click on People on the left-hand navigation menu.
+ > Click on the Admin.
+ > Delete the user account.
+ > Navigate to Jenkins / Manage Jenkins.
+ > Click on Configure Global Security
+ > Check the Enable Security check box
+ > Under Security Realm, select Jenkins’ own user database
+ > In the Authorization section, select Logged-in users can do anything.
+ > Unselect Allow anonymous read access.
+ > Click Save to save your changes.
+-------------------------------------------------
+3. what is the home directory for jenkins?
+ > /var/lib/jenkins
+ 
+4. how can i change jenkins home directory
+ > sudo systemctl stop jenkins
+ > sudo mkdir /home/jenkins_home
+ > sudo chown jenkins:jenkins /home/jenkins_home
+ > sudo cp -prv /var/lib/jenkins /home/jenkins_home
+ > sudo usermod -d /home/jenkins_home jenkins
+ > sudo vi /etc/default/jenkins
+ > JENKINS_HOME=/home/jenkins_home  then save changes
+ > sudo systemctl start jenkins
+----------------------------------------------------
+5. how to change jenkins port number
+ > vi /etc/sysconfig/jenkins
+ > JENKINS_PORT="9090"
+ > save the changes.
+ ----------------------------------------------
+6. I'm not able to login jenkins console page, what could be the reason, troubleshoot
+ >step1
+   restart the jenkins server
+ >step2
+   disable security using config.xml
+     sudo vi /var/lib/jenkins/config.xml
+ 
+ >change usesecurity value from true to false
+  <useSecurity>false</useSecurity> 
+ >step3
+ >goto Dashboard ->Manage Jenkins 
+  from security tab select manage users
+  select your userprofile for which you want to change the password
+  from configurations page, goto password category 
+  and enter your new password and apply the changes
+  from linux machine restart your jenkins service and 
+  try to login.
+---------------------------------------------------
+7. how many ways we can install our jenkins, configure all of them 
+jenkins installation methods:
+	1. os specified(win , lin , mac )
+	2. executable(war) file
+	3. Docker Image
+
+Installation in Linux:
+# sudo wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+
+# sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+# sudo yum upgrade
+# sudo yum install java-11-openjdk
+# sudo amazon-linux-extras install java-openjdk11
+# sudo yum install jenkins
+# sudo systemctl daemon-reload
+# sudo systemctl enable jenkins
+# sudo systemctl start jenkins
+# sudo systemctl status jenkins
+# serverip:8080
+password: 02b1bae97aa84815b8c6b7891cedaef0
+-------------------------------------------------
+jenkins installation using docker:
+
+first we have to open 8080 port in security group.
+# sudo yum update -y                             
+# sudo amazon-linux-extras install docker        
+# sudo service docker start                      
+# sudo service docker status                     
+# sudo systemctl enable docker                   
+# sudo usermod -a -G docker ec2-user             
+# docker  -v                					   
+# docker pull jenkins/jenkins       			   
+# docker images                      			  
+# mkdir jenkins         						   
+# docker run -d --name jenkins -p 8080:8080 -v $PWD/jenkins/ jenkins/jenkins      
+# docker ps  
+to login jenkins console, run the below command to get the admin passwd.
+# docker logs jenkins     
+
+--------------------------------------------------
+
+8. how many ways i can retart my jenkins.
+# sudo systemctl restart Jenkins  (linux)
+# [Jenkins URL]/restart
+# [Jenkins URL]/safeRestart
+# http://localhost:8080/restart
+# http://localhost:8080/safeRestart
+# In jenkins console > manage jenkins > manage pluggins > safe restart > yes
+
+----------------------------------------------------
+
+sonarqube, nexus setup for tmrw class.
+
+
+-----------------------------------------------------------
+Jenkins Administration:
+
+1. security:
+ > authentication : who is the user/ who logged in
+ > authorisation : specific permition to a particular user
+
+path : manage jenkins > manage user > create/modify/delete user (authentication)
+
+path : dashboard > manage jenkins > global security > select user access (authorisation)
+
+2. jenkins Rest Api:
+
+3. Distributed Build: 
+
+how to add nodes in jenkins?
+manage jenkins > manage nodes > new node
+
+how to create a user?
+manage jenkins > manager user > create user
+
+how to give admin access to user?
+manage jenkins > configure global security > authorisation > matrics based security.
+
